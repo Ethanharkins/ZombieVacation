@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class CarMovement : MonoBehaviour
 {
-    public float moveSpeed = 5.0f;     // Movement speed of the car
-    public float leftBoundary = -5.0f; // Left boundary of movement
-    public float rightBoundary = 5.0f; // Right boundary of movement
+    public float moveSpeed = 5.0f;
+    public float leftBoundary = -5.0f;
+    public float rightBoundary = 5.0f;
 
     void Update()
     {
-        // Get horizontal input
+        // Get horizontal input (e.g., arrow keys, A/D keys)
         float horizontalInput = Input.GetAxis("Horizontal");
 
         // Calculate new position within boundaries
