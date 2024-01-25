@@ -2,18 +2,19 @@ using UnityEngine;
 
 public class CarMovement : MonoBehaviour
 {
-    public float moveSpeed = 5.0f;
-    public float turnSpeed = 200.0f;
+    public float moveSpeed = 5.0f;     // Movement speed of the car
+    public float leftBoundary = -5.0f; // Left boundary of movement
+    public float rightBoundary = 5.0f; // Right boundary of movement
 
     void Update()
     {
         // Get horizontal input
         float horizontalInput = Input.GetAxis("Horizontal");
 
-        // Rotate the car
-        transform.Rotate(0, horizontalInput * turnSpeed * Time.deltaTime, 0);
+        // Calculate new position within boundaries
+        float newXPosition = Mathf.Clamp(transform.position.x + horizontalInput * moveSpeed * Time.deltaTime, leftBoundary, rightBoundary);
 
-        // Move the car forward based on its current rotation
-        transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+        // Update the car's position
+        transform.position = new Vector3(newXPosition, transform.position.y, transform.position.z);
     }
 }
