@@ -6,6 +6,7 @@ public class Enemy : MonoBehaviour
     private Transform target;
     private Animator animator;
     private bool isAtTarget = false;
+    public Vector3 teleportPositionAboveTarget; // Set this in the Inspector
 
     void Start()
     {
@@ -16,8 +17,6 @@ public class Enemy : MonoBehaviour
         if (targetObject != null)
         {
             target = targetObject.transform;
-            // Orient the enemy towards the target
-            transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
         }
         else
         {
@@ -25,22 +24,29 @@ public class Enemy : MonoBehaviour
         }
     }
 
-
     void Update()
     {
         if (target != null && !isAtTarget)
         {
-            // Move towards the target
+            // Move towards the target only if not at the target
             transform.position = Vector3.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
-
-            // Check if the enemy has reached the target
-            if (Vector3.Distance(transform.position, target.position) < 0.5f) // Adjust this threshold as needed
-            {
-                isAtTarget = true;
-                animator.SetBool("WalkForward", false);
-                animator.SetBool("Idle", true);
-                animator.SetTrigger("PunchTrigger");
-            }
         }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Target") && !isAtTarget)
+        {
+            isAtTarget = true;
+            TeleportAboveTarget();
+            animator.SetTrigger("PunchTrigger");
+        }
+    }
+
+    private void TeleportAboveTarget()
+    {
+        transform.position = target.position + teleportPositionAboveTarget;
+        animator.SetBool("WalkForward", false);
+        animator.SetBool("Idle", true);
     }
 }

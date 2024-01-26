@@ -16,8 +16,15 @@ public class Bullet : MonoBehaviour
         transform.Translate(Vector3.forward * speed * Time.deltaTime);
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider other)
     {
-        Destroy(gameObject); // Destroy the bullet on any collision
+        if (other.CompareTag("Enemy"))
+        {
+            Destroy(other.gameObject); // Destroy the enemy
+            ScoreManager.Instance.AddScore(1); // Increment the score
+            Destroy(gameObject); // Destroy the bullet
+            Debug.Log("Bullet collided with: " + other.gameObject.name);
+        }
     }
+
 }
