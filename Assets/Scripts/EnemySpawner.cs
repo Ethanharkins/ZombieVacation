@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public GameObject enemyPrefab;
+    public GameObject[] enemyPrefabs; // Array of different enemy prefabs to spawn
     public float spawnInterval = 5.0f; // Time between each spawn
     private float timer;
 
@@ -18,10 +18,16 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnEnemy()
     {
-        GameObject enemy = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
-        // Optionally, explicitly set enemy rotation here if needed
+        if (enemyPrefabs.Length > 0)
+        {
+            // Randomly select an enemy prefab
+            GameObject selectedPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+            // Spawn the selected enemy prefab
+            Instantiate(selectedPrefab, transform.position, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogWarning("No enemy prefabs assigned in the spawner.");
+        }
     }
-
 }
-
-
