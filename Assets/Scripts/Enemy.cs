@@ -2,16 +2,18 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public float moveSpeed = 2.0f;
+    public float moveSpeed = 5.0f;
     private Transform target;
-    private Animator animator;
     private bool isAtTarget = false;
-    public Vector3 teleportPositionAboveTarget; // Set this in the Inspector
+    private Transform respawnPoint; // The empty GameObject's Transform
 
     void Start()
     {
-        animator = GetComponent<Animator>();
-        animator.SetBool("WalkForward", true);
+        respawnPoint = GameObject.FindGameObjectWithTag("RespawnPoint").transform;
+        if (respawnPoint == null)
+        {
+            Debug.LogError("Respawn Point object not found. Please tag your respawn point object with 'RespawnPoint'");
+        }
 
         GameObject targetObject = GameObject.FindGameObjectWithTag("Target");
         if (targetObject != null)
@@ -28,25 +30,39 @@ public class Enemy : MonoBehaviour
     {
         if (target != null && !isAtTarget)
         {
-            // Move towards the target only if not at the target
             transform.position = Vector3.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnCollisionEnter(Collision collision)
     {
-        if (other.CompareTag("Target") && !isAtTarget)
+        // Check for collision with the target or player
+        if (collision.gameObject.CompareTag("Target") || collision.gameObject.CompareTag("Player"))
         {
-            isAtTarget = true;
-            TeleportAboveTarget();
-            animator.SetTrigger("PunchTrigger");
+            TeleportToRespawnPoint();
         }
     }
 
-    private void TeleportAboveTarget()
+    private void TeleportToRespawnPoint()
     {
-        transform.position = target.position + teleportPositionAboveTarget;
-        animator.SetBool("WalkForward", false);
-        animator.SetBool("Idle", true);
+        if (respawnPoint != null)
+        {
+            // Teleport the enemy to the respawn point's position.
+            transform.position = respawnPoint.position;
+        }
+        else
+        {
+            Debug.LogError("Respawn point not set. Make sure there's a GameObject tagged 'RespawnPoint' in the scene.");
+        }
+    }
+
+
+    private void RespawnOnTarget()
+    {
+        // Teleport the enemy to the respawn point's position.
+        if (respawnPoint != null)
+        {
+            transform.position = respawnPoint.position;
+        }
     }
 }

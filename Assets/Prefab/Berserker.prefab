@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7074840709859060090}
   - component: {fileID: 7074840709858669560}
   - component: {fileID: 7074840709858669561}
+  - component: {fileID: -3166458985068401674}
   m_Layer: 0
   m_Name: Berserker
   m_TagString: Enemy
@@ -66,8 +67,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d29b3f2102db5f4fb2f5a6ecbfefa9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.01
-  teleportPositionAboveTarget: {x: 2.89, y: 2.97, z: -4.2}
+  moveSpeed: 1.11
+  respawnPositionOnTarget: {x: -0.24, y: 3.01, z: 0.91}
+--- !u!65 &-3166458985068401674
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7074840709858637146}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7074840709858820096
 GameObject:
   m_ObjectHideFlags: 0
@@ -1230,6 +1244,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7074840709859013736}
   - component: {fileID: 7074840709849354532}
+  - component: {fileID: 2278871008828299855}
   m_Layer: 0
   m_Name: Berserker
   m_TagString: Player
@@ -1274,6 +1289,20 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+--- !u!114 &2278871008828299855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7074840709858820168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d29b3f2102db5f4fb2f5a6ecbfefa9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: -0.98
+  respawnPositionOnTarget: {x: -0.24, y: 3.01, z: 0.91}
 --- !u!1 &7074840709858820172
 GameObject:
   m_ObjectHideFlags: 0
@@ -1318,6 +1347,7 @@ GameObject:
   - component: {fileID: 7074840709853547236}
   - component: {fileID: 8822743255173683600}
   - component: {fileID: 1934393440907728458}
+  - component: {fileID: 7178915144584808203}
   m_Layer: 0
   m_Name: Mesh_Berserker
   m_TagString: Enemy
@@ -1475,6 +1505,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &7178915144584808203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7074840709858820174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d29b3f2102db5f4fb2f5a6ecbfefa9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: -0.98
+  respawnPositionOnTarget: {x: -0.24, y: 3.01, z: 0.91}
 --- !u!1 &7074840709858822112
 GameObject:
   m_ObjectHideFlags: 0
