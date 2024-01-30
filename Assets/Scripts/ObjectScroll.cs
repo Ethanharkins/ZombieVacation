@@ -9,15 +9,14 @@ public class ObjectScroll : MonoBehaviour
     void Start()
     {
         originalPosition = transform.position;
-        Debug.Log("Original Position: " + originalPosition);
+        
     }
 
     void Update()
     {
         transform.Translate(Vector3.back * scrollSpeed * Time.deltaTime, Space.World);
 
-        Debug.Log("Current Position: " + transform.position);
-
+       
         if (transform.position.z < resetThreshold)
         {
             Debug.Log("Resetting Position");

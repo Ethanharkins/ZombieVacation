@@ -3,13 +3,11 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float speed = 20f;
-    private Rigidbody rb;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        Rigidbody rb = GetComponent<Rigidbody>();
 
-        // Calculate the direction from the bullet's position to the cursor's position
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
@@ -20,24 +18,25 @@ public class Bullet : MonoBehaviour
         }
         else
         {
-            // If the raycast doesn't hit anything, default to moving forward
             rb.velocity = transform.forward * speed;
         }
+
+        Debug.Log("Bullet fired towards " + rb.velocity);
     }
+
     void OnCollisionEnter(Collision collision)
     {
+        Debug.Log("Bullet collided with " + collision.gameObject.name);
+
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            // Optionally, update the score here or through a separate manager
-            ScoreManager.Instance.IncreaseScore(1); // Assuming you have a method like this in your ScoreManager
+            Debug.Log("Bullet hit an enemy");
 
-            // Destroy the enemy
-            Destroy(collision.gameObject);
+            // Increase the score if you have a ScoreManager script
+            // ScoreManager.Instance.IncreaseScore(1);
 
-            // Destroy the bullet itself
-            Destroy(gameObject);
+            Destroy(collision.gameObject); // Destroy the enemy
+            Destroy(gameObject); // Destroy the bullet
         }
     }
 }
-
-
