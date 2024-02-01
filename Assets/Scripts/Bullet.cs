@@ -3,6 +3,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float speed = 20f;
+    public float lifetime = 5f; // Lifetime of the bullet in seconds
 
     void Start()
     {
@@ -22,6 +23,9 @@ public class Bullet : MonoBehaviour
         }
 
         Debug.Log("Bullet fired towards " + rb.velocity);
+
+        // Destroy the bullet after 'lifetime' seconds
+        Destroy(gameObject, lifetime);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -32,11 +36,11 @@ public class Bullet : MonoBehaviour
         {
             Debug.Log("Bullet hit an enemy");
 
-            // Increase the score if you have a ScoreManager script
+            // Optionally, increase the score here if you have a ScoreManager
             // ScoreManager.Instance.IncreaseScore(1);
 
             Destroy(collision.gameObject); // Destroy the enemy
-            Destroy(gameObject); // Destroy the bullet
+            Destroy(gameObject); // Immediately destroy the bullet upon collision
         }
     }
 }

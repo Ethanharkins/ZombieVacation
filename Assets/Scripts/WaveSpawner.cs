@@ -1,27 +1,45 @@
 using UnityEngine;
+using System.Collections;
 
 public class WaveSpawner : MonoBehaviour
 {
     public GameObject enemyPrefab;
     public Transform spawnPoint;
 
-    public void SpawnWave(int waveType)
+    public float timeBetweenWaves = 5f;
+    private float countdown = 2f;
+    private int waveIndex = 0;
+
+    void Update()
     {
-        switch (waveType)
+        if (countdown <= 0f)
         {
-            case 1:
+            StartCoroutine(SpawnWave());
+            countdown = timeBetweenWaves;
+        }
+
+        countdown -= Time.deltaTime;
+    }
+
+    IEnumerator SpawnWave()
+    {
+        waveIndex++;
+        Debug.Log("Wave " + waveIndex + " Incoming");
+
+        switch (waveIndex % 3)
+        {
+            case 0:
                 SpawnArcWave();
                 break;
-            case 2:
+            case 1:
                 SpawnLineWave();
                 break;
-            case 3:
+            case 2:
                 SpawnRandomWave();
                 break;
-            default:
-                Debug.LogError("Unknown wave type: " + waveType);
-                break;
         }
+
+        yield return new WaitForSeconds(timeBetweenWaves);
     }
 
     private void SpawnArcWave()
@@ -31,9 +49,8 @@ public class WaveSpawner : MonoBehaviour
 
         for (int i = 0; i < enemyCount; i++)
         {
-            // Calculate position in an arc
             float angle = i * arcAngle / (enemyCount - 1) - arcAngle / 2;
-            Vector3 spawnPos = Quaternion.Euler(0, angle, 0) * Vector3.forward * 5f; // Adjust distance as needed
+            Vector3 spawnPos = Quaternion.Euler(0, angle, 0) * Vector3.forward * 5f;
             Instantiate(enemyPrefab, spawnPoint.position + spawnPos, Quaternion.identity);
         }
     }
@@ -45,14 +62,14 @@ public class WaveSpawner : MonoBehaviour
 
         for (int i = 0; i < enemyCount; i++)
         {
-            Vector3 spawnPos = new Vector3(i * spacing, 0, 0); // Horizontal line
+            Vector3 spawnPos = new Vector3(i * spacing, 0, 0);
             Instantiate(enemyPrefab, spawnPoint.position + spawnPos, Quaternion.identity);
         }
     }
 
     private void SpawnRandomWave()
     {
-        int enemyCount = Random.Range(3, 7); // Random number of enemies
+        int enemyCount = Random.Range(3, 7);
         float radius = 5f; // Adjust as needed
 
         for (int i = 0; i < enemyCount; i++)
