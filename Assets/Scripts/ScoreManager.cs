@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro; // Make sure to include this namespace if using TextMeshPro
 
 public class ScoreManager : MonoBehaviour
 {
@@ -6,6 +7,7 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager Instance { get { return _instance; } }
 
     public int Score { get; private set; } // The current score
+    public TextMeshProUGUI scoreText; // Assign this in the inspector
 
     void Awake()
     {
@@ -16,13 +18,21 @@ public class ScoreManager : MonoBehaviour
         else
         {
             _instance = this;
+            DontDestroyOnLoad(this.gameObject); // Keep the score manager across scenes
         }
     }
 
     public void IncreaseScore(int amount)
     {
         Score += amount;
-        // Optional: Update the score UI immediately here, if required
+        // Update the score UI
+        if (scoreText != null)
+        {
+            scoreText.text = "Score: " + Score.ToString();
+        }
+        else
+        {
+            Debug.LogWarning("Score Text not assigned in ScoreManager.");
+        }
     }
 }
-

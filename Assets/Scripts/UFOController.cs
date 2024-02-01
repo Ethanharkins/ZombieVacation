@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class UFOController : MonoBehaviour
 {
+    public Transform player;
     public float chaseSpeed = 5f;
     public float circlingSpeed = 50f;
     public float circlingRadius = 5f;
@@ -9,38 +10,30 @@ public class UFOController : MonoBehaviour
 
     private bool isCircling = false;
     private Vector3 circlingDirection;
-    private Transform gunTarget;
 
     void Start()
     {
-        // Find the gun by tag
-        GameObject gunObj = GameObject.FindGameObjectWithTag("Gun");
-        if (gunObj != null)
+        if (player == null)
         {
-            gunTarget = gunObj.transform;
-        }
-        else
-        {
-            Debug.LogWarning("Gun object not found. Make sure your gun is tagged correctly.");
+            // Automatically find the player by tag
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Gun");
+            if (playerObj != null)
+            {
+                player = playerObj.transform;
+            }
         }
 
         // Initial circling direction
         circlingDirection = transform.right;
-        Rigidbody rb = GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.isKinematic = true;
-        }
-
     }
 
     void Update()
     {
-        if (gunTarget == null) return;
+        if (player == null) return;
 
-        float distanceToTarget = Vector3.Distance(transform.position, gunTarget.position);
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        if (distanceToTarget <= detectionRadius && !isCircling)
+        if (distanceToPlayer <= detectionRadius && !isCircling)
         {
             // Start circling
             isCircling = true;
@@ -48,15 +41,15 @@ public class UFOController : MonoBehaviour
 
         if (!isCircling)
         {
-            // Chase the gun target
-            Vector3 direction = (gunTarget.position - transform.position).normalized;
+            // Chase the player
+            Vector3 direction = (player.position - transform.position).normalized;
             transform.position += direction * chaseSpeed * Time.deltaTime;
         }
         else
         {
             // Calculate circling position
             circlingDirection = Quaternion.Euler(0, circlingSpeed * Time.deltaTime, 0) * circlingDirection;
-            Vector3 targetPosition = gunTarget.position + circlingDirection * circlingRadius;
+            Vector3 targetPosition = player.position + circlingDirection * circlingRadius;
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, chaseSpeed * Time.deltaTime);
         }
     }

@@ -1,83 +1,72 @@
 using UnityEngine;
-using System.Collections;
 
 public class WaveSpawner : MonoBehaviour
 {
-    public GameObject enemyPrefab;
-    public Transform spawnPoint;
+    public GameObject[] enemyPrefabs; // Array of different enemy prefabs to spawn
+    public Transform spawnPoint; // Central point for spawning enemies
+    public float spawnInterval = 5.0f; // Time between each spawn
+    private float timer;
 
-    public float timeBetweenWaves = 5f;
-    private float countdown = 2f;
-    private int waveIndex = 0;
+    // Configuration for different spawning patterns
+    public float lineSpacing = 3f;
+    public int gridRows = 2;
+    public int gridColumns = 3;
+    public float gridSpacing = 2f;
+    public int circleEnemyCount = 6;
+    public float circleRadius = 5f;
 
     void Update()
     {
-        if (countdown <= 0f)
+        timer += Time.deltaTime;
+        if (timer >= spawnInterval)
         {
-            StartCoroutine(SpawnWave());
-            countdown = timeBetweenWaves;
-        }
+            // Example of cycling through different spawn patterns
+            int wavePattern = Random.Range(0, 3); // Randomly choose a pattern
+            switch (wavePattern)
+            {
+                case 0:
+                    SpawnLineWave();
+                    break;
+                case 1:
+                    SpawnGridWave();
+                    break;
+                case 2:
+                    SpawnCircleWave();
+                    break;
+            }
 
-        countdown -= Time.deltaTime;
-    }
-
-    IEnumerator SpawnWave()
-    {
-        waveIndex++;
-        Debug.Log("Wave " + waveIndex + " Incoming");
-
-        switch (waveIndex % 3)
-        {
-            case 0:
-                SpawnArcWave();
-                break;
-            case 1:
-                SpawnLineWave();
-                break;
-            case 2:
-                SpawnRandomWave();
-                break;
-        }
-
-        yield return new WaitForSeconds(timeBetweenWaves);
-    }
-
-    private void SpawnArcWave()
-    {
-        int enemyCount = 4;
-        float arcAngle = 45f; // Adjust as needed
-
-        for (int i = 0; i < enemyCount; i++)
-        {
-            float angle = i * arcAngle / (enemyCount - 1) - arcAngle / 2;
-            Vector3 spawnPos = Quaternion.Euler(0, angle, 0) * Vector3.forward * 5f;
-            Instantiate(enemyPrefab, spawnPoint.position + spawnPos, Quaternion.identity);
+            timer = 0f;
         }
     }
 
-    private void SpawnLineWave()
+    void SpawnLineWave()
     {
-        int enemyCount = 5;
-        float spacing = 2f; // Adjust as needed
-
-        for (int i = 0; i < enemyCount; i++)
+        for (int i = 0; i < enemyPrefabs.Length; i++)
         {
-            Vector3 spawnPos = new Vector3(i * spacing, 0, 0);
-            Instantiate(enemyPrefab, spawnPoint.position + spawnPos, Quaternion.identity);
+            Vector3 spawnPos = spawnPoint.position + new Vector3(i * lineSpacing, 0, 0); // Line pattern
+            Instantiate(enemyPrefabs[i % enemyPrefabs.Length], spawnPos, Quaternion.identity);
         }
     }
 
-    private void SpawnRandomWave()
+    void SpawnGridWave()
     {
-        int enemyCount = Random.Range(3, 7);
-        float radius = 5f; // Adjust as needed
-
-        for (int i = 0; i < enemyCount; i++)
+        for (int row = 0; row < gridRows; row++)
         {
-            Vector3 spawnPos = Random.insideUnitCircle * radius;
-            spawnPos.z = spawnPos.y;
-            spawnPos.y = 0;
-            Instantiate(enemyPrefab, spawnPoint.position + spawnPos, Quaternion.identity);
+            for (int col = 0; col < gridColumns; col++)
+            {
+                Vector3 spawnPos = spawnPoint.position + new Vector3(col * gridSpacing, 0, row * gridSpacing); // Grid pattern
+                Instantiate(enemyPrefabs[(row + col) % enemyPrefabs.Length], spawnPos, Quaternion.identity);
+            }
+        }
+    }
+
+    void SpawnCircleWave()
+    {
+        for (int i = 0; i < circleEnemyCount; i++)
+        {
+            float angle = i * Mathf.PI * 2 / circleEnemyCount;
+            Vector3 spawnPos = new Vector3(Mathf.Cos(angle) * circleRadius, 0, Mathf.Sin(angle) * circleRadius);
+            Instantiate(enemyPrefabs[i % enemyPrefabs.Length], spawnPoint.position + spawnPos, Quaternion.identity);
         }
     }
 }
