@@ -9,6 +9,7 @@ TagManager:
   - Target
   - RespawnPoint
   - Gun
+  - EnemyBullet
   layers:
   - Default
   - TransparentFX

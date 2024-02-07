@@ -7,7 +7,8 @@ public class UIScoreDisplay : MonoBehaviour
 
     void Update()
     {
-        if (ScoreManager.Instance != null)
-            scoreText.text = "Score: " + ScoreManager.Instance.Score.ToString();
+        // Update to reference GameManager for the score
+        if (GameManager.Instance != null)
+            scoreText.text = "Score: " + GameManager.Instance.Score.ToString();
     }
 }

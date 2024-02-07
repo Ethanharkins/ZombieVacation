@@ -21,16 +21,16 @@ public class Bullet : MonoBehaviour
         }
 
         Debug.Log("Bullet fired towards " + rb.velocity);
-        // Destroy the bullet after a certain time to prevent it from existing indefinitely
-        Destroy(gameObject, 5f); // Adjust the lifetime as needed
+        Destroy(gameObject, 5f); // Destroys the bullet after 5 seconds to clean up
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        // Adjusted to check for "Enemy" and "BossUFO" tags for broader compatibility
+        if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("BossUFO"))
         {
             Debug.Log("Bullet hit an enemy");
-            ScoreManager.Instance.IncreaseScore(1); // Increase score by 1
+            GameManager.Instance.IncreaseScore(1); // Increase score by 1 using GameManager
             Destroy(collision.gameObject); // Destroy the enemy
             Destroy(gameObject); // Destroy the bullet
         }
