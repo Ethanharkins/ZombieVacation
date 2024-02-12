@@ -300,7 +300,7 @@ MonoBehaviour:
   circlingSpeed: 50
   circlingRadius: 5
   detectionRadius: 10
-  explosionEffectPrefab: {fileID: 6675156836875493329, guid: 89970f02c9e3e7a46a6c2fd3618920cd, type: 3}
+  explosionEffectPrefab: {fileID: 6252455938135318148, guid: a4127b1dfbaaa2140abe4dd8f2435fac, type: 3}
   lifetime: 30
 --- !u!1 &1475106652833978083
 GameObject:

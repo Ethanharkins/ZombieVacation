@@ -1,24 +1,35 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro; // Include for TextMeshPro support
+using TMPro; // Necessary for TextMeshPro components
+using UnityEngine.UI; // Include for UI elements like InputField
+using System; // Added for TimeSpan
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public GameObject pauseMenu; // Assign in the Inspector
-    public TextMeshProUGUI scoreText; // Reference to the TextMeshProUGUI component for score display
+    [SerializeField] private GameObject pauseMenu; // Assign in the Inspector
+    [SerializeField] private GameObject endScreen; // Assign in the Inspector
+    [SerializeField] private TextMeshProUGUI scoreText; // Reference for the score display
+    [SerializeField] private TextMeshProUGUI finalScoreText; // For displaying final score on the end screen
+    [SerializeField] private TextMeshProUGUI finalTimeText; // For displaying final time on the end screen
+    [SerializeField] private TMP_InputField nameInputField; // Adjusted for TMP input field
+    [SerializeField] private TextMeshProUGUI leaderboardText; // For displaying the leaderboard
 
     private bool isGamePaused = false;
-    private int circlingEnemiesCount = 0;
-    public float baseScrollSpeed = 5f; // Base speed for ObjectScroll
-    private float currentScrollSpeed;
-    private int score = 0; // The current score
+    private int score = 0; // Holds the game's score
 
+    // Public property to access the score
     public int Score
     {
-        get { return score; } // Public getter to expose the score
+        get { return score; }
+        set
+        {
+            score = value;
+            UpdateScoreUI();
+        }
     }
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -34,64 +45,26 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        UpdateScrollSpeed();
-        UpdateScoreUI(); // Initialize score UI at start
+        if (pauseMenu != null)
+            pauseMenu.SetActive(false); // Ensure the pause menu is not active on start
+        if (endScreen != null)
+            endScreen.SetActive(false); // Ensure the end screen is not active on start
+        UpdateScoreUI(); // Initialize score UI at the start
     }
 
     void Update()
     {
+        // Toggle pause menu on Escape key press
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePauseGame();
         }
     }
 
-    public void RegisterEnemy()
+    public void TogglePauseGame()
     {
-        circlingEnemiesCount++;
-        UpdateScrollSpeed();
-    }
-
-    public void UnregisterEnemy()
-    {
-        circlingEnemiesCount = Mathf.Max(0, circlingEnemiesCount - 1);
-        UpdateScrollSpeed();
-    }
-
-    void UpdateScrollSpeed()
-    {
-        currentScrollSpeed = baseScrollSpeed - circlingEnemiesCount;
-        ObjectScroll[] scrollers = FindObjectsOfType<ObjectScroll>();
-        foreach (var scroller in scrollers)
-        {
-            scroller.SetScrollSpeed(currentScrollSpeed);
-        }
-    }
-
-    public float GetCurrentScrollSpeed()
-    {
-        return currentScrollSpeed;
-    }
-
-    // Score management methods
-    public void IncreaseScore(int amount)
-    {
-        score += amount;
-        UpdateScoreUI();
-    }
-
-    void UpdateScoreUI()
-    {
-        if (scoreText != null)
-        {
-            scoreText.text = "Score: " + score.ToString();
-        }
-    }
-
-    // Toggle pause game
-    void TogglePauseGame()
-    {
-        if (!isGamePaused)
+        isGamePaused = !isGamePaused; // Toggle the pause state
+        if (isGamePaused)
         {
             PauseGame();
         }
@@ -101,31 +74,73 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Pause game
     public void PauseGame()
     {
-        pauseMenu.SetActive(true);
-        Time.timeScale = 0f; // Freeze time
-        isGamePaused = true;
+        if (pauseMenu != null)
+            pauseMenu.SetActive(true);
+        Time.timeScale = 0f; // Freeze the game
     }
 
-    // Resume game
     public void ResumeGame()
     {
-        pauseMenu.SetActive(false);
-        Time.timeScale = 1f; // Resume time
-        isGamePaused = false;
+        if (pauseMenu != null)
+            pauseMenu.SetActive(false);
+        Time.timeScale = 1f; // Resume the game
     }
 
-    // Quit game
     public void QuitGame()
     {
         Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false; // For use in the Unity Editor
+#endif
     }
 
-    // Load Level1
     public void LoadLevel1()
     {
         SceneManager.LoadScene("Level1");
+    }
+
+    public void IncreaseScore(int amount)
+    {
+        Score += amount; // Use the property to automatically update the UI when the score changes
+    }
+
+    void UpdateScoreUI()
+    {
+        if (scoreText != null)
+            scoreText.text = "Score: " + Score.ToString();
+    }
+
+    public void EndGame()
+    {
+        if (endScreen != null)
+        {
+            endScreen.SetActive(true); // Show the end screen
+            finalScoreText.text = "Final Score: " + Score.ToString();
+            finalTimeText.text = "Time: " + FormatTime(Time.timeSinceLevelLoad);
+            Time.timeScale = 0f; // Freeze the game
+            nameInputField.text = ""; // Ensure TMP input field is reset or set to default name
+        }
+    }
+
+    public void SubmitScore()
+    {
+        string playerName = nameInputField.text != "" ? nameInputField.text : "Anonymous";
+        LeaderboardManager.Instance.TryAddLeaderboardEntry(playerName, Score, Time.timeSinceLevelLoad);
+        UpdateLeaderboardDisplay();
+        // Optionally, you can hide the input field and submit button after submission
+    }
+
+    private void UpdateLeaderboardDisplay()
+    {
+        // Implementation depends on your LeaderboardManager's design.
+        // This method should retrieve the leaderboard entries and update the UI accordingly.
+    }
+
+    private string FormatTime(float timeInSeconds)
+    {
+        TimeSpan timeSpan = TimeSpan.FromSeconds(timeInSeconds);
+        return string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
     }
 }

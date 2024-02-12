@@ -20,8 +20,8 @@ public class CarLives : MonoBehaviour
         livesUI.UpdateLives(lives);
         if (lives <= 0)
         {
-            // Handle game over logic here
-            Debug.Log("Game Over");
+            GameManager.Instance.EndGame(); // Trigger game over logic
         }
     }
+
 }

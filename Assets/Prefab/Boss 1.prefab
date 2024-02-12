@@ -3041,7 +3041,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 5
-  explosionEffectPrefab: {fileID: 6675156836875493329, guid: 89970f02c9e3e7a46a6c2fd3618920cd, type: 3}
+  explosionEffectPrefab: {fileID: 6252455938135318148, guid: a4127b1dfbaaa2140abe4dd8f2435fac, type: 3}
   enemyBulletPrefab: {fileID: 5732600426272132921, guid: cb5299c19bf68464d825ebd5dde0e52c, type: 3}
   shootingPoint: {fileID: 2867801849752731574}
   target: {fileID: 3599253127295043636, guid: 7230740b66b103948ad3999e2f40078e, type: 3}

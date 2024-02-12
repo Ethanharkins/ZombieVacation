@@ -1,14 +1,15 @@
 using UnityEngine;
-using TMPro; // Include the TextMeshPro namespace
+using TMPro;
 
 public class UIScoreDisplay : MonoBehaviour
 {
-    public TextMeshProUGUI scoreText; // Reference to the TextMeshProUGUI component
+    public TextMeshProUGUI scoreText;
 
     void Update()
     {
-        // Update to reference GameManager for the score
-        if (GameManager.Instance != null)
-            scoreText.text = "Score: " + GameManager.Instance.Score.ToString();
+        if (GameManager.Instance != null && scoreText != null)
+        {
+            scoreText.text = "Score: " + GameManager.Instance.Score;
+        }
     }
 }
