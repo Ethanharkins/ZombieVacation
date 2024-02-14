@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro; // Necessary for TextMeshPro components
-using UnityEngine.UI; // Include for UI elements like InputField
 using System; // Added for TimeSpan
 
 public class GameManager : MonoBehaviour
@@ -13,13 +12,20 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText; // Reference for the score display
     [SerializeField] private TextMeshProUGUI finalScoreText; // For displaying final score on the end screen
     [SerializeField] private TextMeshProUGUI finalTimeText; // For displaying final time on the end screen
-    [SerializeField] private TMP_InputField nameInputField; // Adjusted for TMP input field
-    [SerializeField] private TextMeshProUGUI leaderboardText; // For displaying the leaderboard
+    [SerializeField] private TMP_InputField nameInputField; // For player name input
+    // [SerializeField] private TextMeshProUGUI leaderboardText; // Removed for leaderboard feature removal
+    [SerializeField] private TextMeshProUGUI nameText; // For displaying the player's name in the scene
 
     private bool isGamePaused = false;
     private int score = 0; // Holds the game's score
+    private float survivalTime = 0f; // Tracks survival time
+    private int totalEnemies = 0; // Tracks the total number of enemies
 
-    // Public property to access the score
+    // New fields for bullet upgrades
+    [SerializeField] private GameObject[] bulletPrefabs; // Array to hold different bullet prefabs
+    private int currentBulletIndex = 0; // Tracks the current bullet type
+
+    // Public property to access and modify the score
     public int Score
     {
         get { return score; }
@@ -28,6 +34,12 @@ public class GameManager : MonoBehaviour
             score = value;
             UpdateScoreUI();
         }
+    }
+
+    // Public property to get the current bullet prefab
+    public GameObject CurrentBulletPrefab
+    {
+        get { return bulletPrefabs[currentBulletIndex]; }
     }
 
     void Awake()
@@ -54,6 +66,11 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (!isGamePaused)
+        {
+            survivalTime += Time.deltaTime; // Update survival time only when the game is not paused
+        }
+
         // Toggle pause menu on Escape key press
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -118,29 +135,44 @@ public class GameManager : MonoBehaviour
         {
             endScreen.SetActive(true); // Show the end screen
             finalScoreText.text = "Final Score: " + Score.ToString();
-            finalTimeText.text = "Time: " + FormatTime(Time.timeSinceLevelLoad);
+            finalTimeText.text = "Time Survived: " + FormatTime(survivalTime);
             Time.timeScale = 0f; // Freeze the game
-            nameInputField.text = ""; // Ensure TMP input field is reset or set to default name
+            nameInputField.text = ""; // Ensure TMP input field is reset
         }
     }
 
-    public void SubmitScore()
+    public void UpgradeBullet()
     {
-        string playerName = nameInputField.text != "" ? nameInputField.text : "Anonymous";
-        LeaderboardManager.Instance.TryAddLeaderboardEntry(playerName, Score, Time.timeSinceLevelLoad);
-        UpdateLeaderboardDisplay();
-        // Optionally, you can hide the input field and submit button after submission
-    }
-
-    private void UpdateLeaderboardDisplay()
-    {
-        // Implementation depends on your LeaderboardManager's design.
-        // This method should retrieve the leaderboard entries and update the UI accordingly.
+        int[] upgradeCosts = new int[] { 15, 30, 45 }; // Costs for each upgrade
+        if (currentBulletIndex < bulletPrefabs.Length - 1 && Score >= upgradeCosts[currentBulletIndex])
+        {
+            Score -= upgradeCosts[currentBulletIndex]; // Deduct cost from score
+            currentBulletIndex++; // Upgrade bullet
+            Debug.Log("Bullet upgraded to type: " + currentBulletIndex);
+            UpdateScoreUI(); // Update the score UI to reflect the deducted points
+        }
+        else
+        {
+            Debug.Log("Not enough score for upgrade or max upgrade reached.");
+        }
     }
 
     private string FormatTime(float timeInSeconds)
     {
         TimeSpan timeSpan = TimeSpan.FromSeconds(timeInSeconds);
         return string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
+    }
+
+    // Methods to manage enemy registration
+    public void RegisterEnemy()
+    {
+        totalEnemies++;
+        Debug.Log("Enemy Registered. Total enemies: " + totalEnemies);
+    }
+
+    public void UnregisterEnemy()
+    {
+        totalEnemies = Mathf.Max(0, totalEnemies - 1); // Avoid negative values
+        Debug.Log("Enemy Unregistered. Remaining enemies: " + totalEnemies);
     }
 }

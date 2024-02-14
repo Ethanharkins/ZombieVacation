@@ -1,20 +1,33 @@
-using System;
-using System.Linq;
 using UnityEngine;
+using TMPro;
+using System.Collections.Generic;
+using System.Linq;
 
 [System.Serializable]
-
 public class LeaderboardEntry
 {
     public string playerName;
     public int score;
     public float time;
+
+    public LeaderboardEntry(string playerName, int score, float time)
+    {
+        this.playerName = playerName;
+        this.score = score;
+        this.time = time;
+    }
 }
 
 public class LeaderBoardManager : MonoBehaviour
 {
     public static LeaderBoardManager Instance;
-    private LeaderboardEntry[] leaderboardEntries = new LeaderboardEntry[5];
+
+    [SerializeField] private List<TextMeshProUGUI> nameTexts; // Assign in Inspector
+    [SerializeField] private List<TextMeshProUGUI> scoreTexts; // Assign in Inspector
+    [SerializeField] private List<TextMeshProUGUI> timeTexts; // Assign in Inspector
+
+    private List<LeaderboardEntry> leaderboardEntries = new List<LeaderboardEntry>();
+    private const int MaxEntries = 4; // Assuming 4 leaderboard slots
 
     void Awake()
     {
@@ -30,57 +43,56 @@ public class LeaderBoardManager : MonoBehaviour
         }
     }
 
-    public void TryAddLeaderboardEntry(string playerName, int score, float time)
+    public void TryAddEntry(string playerName, int score, float time)
     {
-        LeaderboardEntry newEntry = new LeaderboardEntry { playerName = playerName, score = score, time = time };
-        // Determine if the new entry qualifies for the leaderboard
-        bool qualifies = false;
-        for (int i = 0; i < leaderboardEntries.Length; i++)
-        {
-            if (leaderboardEntries[i] == null || score > leaderboardEntries[i].score || (score == leaderboardEntries[i].score && time < leaderboardEntries[i].time))
-            {
-                qualifies = true;
-                break;
-            }
-        }
+        LeaderboardEntry newEntry = new LeaderboardEntry(playerName, score, time);
+        leaderboardEntries.Add(newEntry);
 
-        if (qualifies)
+        // Sort and then keep only the top entries
+        leaderboardEntries = leaderboardEntries
+            .OrderByDescending(entry => entry.score)
+            .ThenBy(entry => entry.time)
+            .Take(MaxEntries)
+            .ToList();
+
+        UpdateLeaderboardUI();
+        SaveLeaderboard();
+    }
+
+    private void UpdateLeaderboardUI()
+    {
+        for (int i = 0; i < MaxEntries; i++)
         {
-            // Insert new entry in sorted order and remove the last one if necessary
-            var tempList = leaderboardEntries.ToList();
-            tempList.Add(newEntry);
-            tempList.Sort((entry1, entry2) => entry2.score.CompareTo(entry1.score) != 0 ? entry2.score.CompareTo(entry1.score) : entry1.time.CompareTo(entry2.time));
-            if (tempList.Count > 5) tempList.RemoveAt(5);
-            leaderboardEntries = tempList.ToArray();
-            SaveLeaderboard();
+            if (i < leaderboardEntries.Count)
+            {
+                nameTexts[i].text = leaderboardEntries[i].playerName;
+                scoreTexts[i].text = leaderboardEntries[i].score.ToString();
+                timeTexts[i].text = FormatTime(leaderboardEntries[i].time);
+            }
+            else
+            {
+                // Clear the text if there are less than 4 entries
+                nameTexts[i].text = "";
+                scoreTexts[i].text = "";
+                timeTexts[i].text = "";
+            }
         }
     }
 
-
-    private void LoadLeaderboard()
+    private string FormatTime(float timeInSeconds)
     {
-        for (int i = 0; i < leaderboardEntries.Length; i++)
-        {
-            string key = "LeaderboardEntry" + i;
-            string value = PlayerPrefs.GetString(key, null);
-            if (!string.IsNullOrEmpty(value))
-            {
-                leaderboardEntries[i] = JsonUtility.FromJson<LeaderboardEntry>(value);
-            }
-        }
+        int minutes = (int)timeInSeconds / 60;
+        int seconds = (int)timeInSeconds % 60;
+        return $"{minutes:D2}:{seconds:D2}";
     }
 
     private void SaveLeaderboard()
     {
-        for (int i = 0; i < leaderboardEntries.Length; i++)
-        {
-            if (leaderboardEntries[i] != null)
-            {
-                string key = "LeaderboardEntry" + i;
-                string value = JsonUtility.ToJson(leaderboardEntries[i]);
-                PlayerPrefs.SetString(key, value);
-            }
-        }
-        PlayerPrefs.Save();
+        // Implement saving logic (e.g., PlayerPrefs, file system)
+    }
+
+    private void LoadLeaderboard()
+    {
+        // Implement loading logic
     }
 }

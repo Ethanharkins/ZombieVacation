@@ -45,4 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 717168810204604481, guid: 1b658c93dadefc34fb5c8f1398212b41, type: 3}
+  endScreen: {fileID: 3183185272228290230, guid: 96f7421863186a342aa8f88772548b63, type: 3}
   scoreText: {fileID: 4212391039819724753, guid: 813111885a5a2d647866b39935d24588, type: 3}
+  finalScoreText: {fileID: 4212391039819724753, guid: 813111885a5a2d647866b39935d24588, type: 3}
+  finalTimeText: {fileID: 8523667276460765185, guid: f92aa9d15c356b64b8efc4d65cfb1306, type: 3}
+  playerNameInputField: {fileID: 0}
