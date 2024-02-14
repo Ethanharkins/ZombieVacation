@@ -268,7 +268,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 116
   m_CollisionDetection: 1
 --- !u!135 &2578637853823563872
 SphereCollider:
@@ -297,11 +297,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 3599253127295043636, guid: 7230740b66b103948ad3999e2f40078e, type: 3}
   chaseSpeed: 5
-  circlingSpeed: 50
-  circlingRadius: 5
-  detectionRadius: 10
+  circlingSpeed: 54.71
+  circlingRadius: 3
+  detectionRadius: 20
   explosionEffectPrefab: {fileID: 6252455938135318148, guid: a4127b1dfbaaa2140abe4dd8f2435fac, type: 3}
-  lifetime: 30
+  lifetime: 15
 --- !u!1 &1475106652833978083
 GameObject:
   m_ObjectHideFlags: 0

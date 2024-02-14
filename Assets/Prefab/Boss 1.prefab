@@ -3013,7 +3013,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 116
   m_CollisionDetection: 1
 --- !u!135 &6375031103956308114
 SphereCollider:
@@ -3045,6 +3045,6 @@ MonoBehaviour:
   enemyBulletPrefab: {fileID: 5732600426272132921, guid: cb5299c19bf68464d825ebd5dde0e52c, type: 3}
   shootingPoint: {fileID: 2867801849752731574}
   target: {fileID: 3599253127295043636, guid: 7230740b66b103948ad3999e2f40078e, type: 3}
-  followDistance: 15
+  followDistance: 10
   chaseSpeed: 2
   shootingInterval: 2

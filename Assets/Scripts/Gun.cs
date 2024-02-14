@@ -2,39 +2,44 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    public GameObject bulletPrefab;
     public Transform bulletSpawnPoint;
-    public float fireRate = 2.0f;
+    private BulletManager bulletManager;
     private float nextFireTime = 0f;
-    public Camera mainCamera; // Assign the main camera
+
+    void Start()
+    {
+        bulletManager = FindObjectOfType<BulletManager>();
+    }
 
     void Update()
     {
-        AimTowardsMouse();
+        AimTowardsCursor();
 
-        if (Time.time > nextFireTime)
+        if (Input.GetMouseButtonDown(0) && Time.time > nextFireTime)
         {
-            if (Input.GetMouseButtonDown(0)) // Fire with left mouse button
-            {
-                Shoot();
-                nextFireTime = Time.time + fireRate;
-            }
+            bulletManager.ShootBullet(bulletSpawnPoint);
+            nextFireTime = Time.time + bulletManager.GetCurrentBulletConfig().shootingInterval;
+        }
+
+        if (Input.GetKeyDown(KeyCode.U)) // Press U to upgrade bullet
+        {
+            bulletManager.UpgradeBullet();
         }
     }
 
-    void AimTowardsMouse()
+    void AimTowardsCursor()
     {
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hitInfo))
+        Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+        float rayLength;
+
+        if (groundPlane.Raycast(cameraRay, out rayLength))
         {
-            Vector3 direction = hitInfo.point - transform.position;
-            direction.y = 0; // Keep the gun level, ignore vertical difference
-            transform.forward = direction;
+            Vector3 pointToLook = cameraRay.GetPoint(rayLength);
+            Debug.DrawLine(cameraRay.origin, pointToLook, Color.blue);
+            transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
         }
     }
 
-    void Shoot()
-    {
-        Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
-    }
+
 }

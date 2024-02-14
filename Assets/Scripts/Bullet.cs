@@ -2,37 +2,20 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public float speed = 20f;
-
-    void Start()
+    public void Initialize(float speed)
     {
-        Rigidbody rb = GetComponent<Rigidbody>();
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit))
-        {
-            Vector3 direction = (hit.point - transform.position).normalized;
-            rb.velocity = direction * speed;
-        }
-        else
-        {
-            rb.velocity = transform.forward * speed;
-        }
-
-        Debug.Log("Bullet fired towards " + rb.velocity);
-        Destroy(gameObject, 5f); // Destroys the bullet after 5 seconds to clean up
+        GetComponent<Rigidbody>().velocity = transform.forward * speed;
+        Destroy(gameObject, 5f); // Cleanup bullet after 5 seconds
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        // Adjusted to check for "Enemy" and "BossUFO" tags for broader compatibility
-        if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("BossUFO"))
+        if (collision.gameObject.CompareTag("Enemy")) // Make sure your enemy GameObjects have the "Enemy" tag
         {
-            Debug.Log("Bullet hit an enemy");
-            GameManager.Instance.IncreaseScore(1); // Increase score by 1 using GameManager
             Destroy(collision.gameObject); // Destroy the enemy
+            GameManager.Instance.IncreaseScore(1); // Increase score by 1 (adjust value as needed)
             Destroy(gameObject); // Destroy the bullet
         }
     }
+
 }
