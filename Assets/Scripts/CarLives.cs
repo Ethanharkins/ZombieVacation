@@ -3,25 +3,31 @@ using UnityEngine;
 public class CarLives : MonoBehaviour
 {
     public int lives = 3; // Starting lives
-    public LivesUI livesUI; // Reference to the LivesUI script to update the UI
+    public LivesUI livesUI; // Assume you have a LivesUI script for UI updates
 
-    void OnCollisionEnter(Collision collision)
+    void Start()
     {
-        // Check for collision with enemy bullets
-        if (collision.gameObject.CompareTag("EnemyBullet"))
-        {
-            TakeDamage();
-        }
+        // Optionally initialize lives UI at start
+        UpdateLivesUI();
     }
 
-    public void TakeDamage()
+    public void TakeDamage(int damage)
     {
-        lives -= 1;
-        livesUI.UpdateLives(lives);
+        lives -= damage;
+        UpdateLivesUI();
+
         if (lives <= 0)
         {
-            GameManager.Instance.EndGame(); // Trigger game over logic
+            // Trigger game over logic
+            GameManager.Instance.EndGame();
         }
     }
 
+    private void UpdateLivesUI()
+    {
+        if (livesUI != null)
+        {
+            livesUI.UpdateLives(lives);
+        }
+    }
 }

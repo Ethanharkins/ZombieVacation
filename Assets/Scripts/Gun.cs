@@ -23,10 +23,9 @@ public class Gun : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.U)) // Press U to upgrade bullet
         {
-            bulletManager.UpgradeBullet();
+            GameManager.Instance.UpgradeBullet(); // Change this call to use GameManager's upgrade method
         }
     }
-
     void AimTowardsCursor()
     {
         Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -41,5 +40,6 @@ public class Gun : MonoBehaviour
         }
     }
 
+    
 
 }

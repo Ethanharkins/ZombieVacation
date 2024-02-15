@@ -3,13 +3,18 @@ using TMPro;
 
 public class UIScoreDisplay : MonoBehaviour
 {
-    public TextMeshProUGUI scoreText;
+    private TextMeshProUGUI scoreText;
+
+    void Awake()
+    {
+        scoreText = GetComponent<TextMeshProUGUI>();
+    }
 
     void Update()
     {
         if (GameManager.Instance != null && scoreText != null)
         {
-            scoreText.text = "Score: " + GameManager.Instance.Score;
+            scoreText.text = "Score: " + GameManager.Instance.Score.ToString();
         }
     }
 }

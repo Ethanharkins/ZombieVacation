@@ -5,7 +5,7 @@ using System; // Added for TimeSpan
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
+    public static GameManager Instance { get; private set; }
 
     [SerializeField] private GameObject pauseMenu; // Assign in the Inspector
     [SerializeField] private GameObject endScreen; // Assign in the Inspector
@@ -24,6 +24,14 @@ public class GameManager : MonoBehaviour
     // New fields for bullet upgrades
     [SerializeField] private GameObject[] bulletPrefabs; // Array to hold different bullet prefabs
     private int currentBulletIndex = 0; // Tracks the current bullet type
+
+
+    // References to audio clips
+    public AudioClip ufoDestructionSound;
+    public AudioClip gunShotSound;
+
+    private AudioSource audioSource;
+
 
     // Public property to access and modify the score
     public int Score
@@ -66,17 +74,20 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (!isGamePaused)
-        {
-            survivalTime += Time.deltaTime; // Update survival time only when the game is not paused
-        }
-
-        // Toggle pause menu on Escape key press
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            TogglePauseGame();
+            pauseMenu.SetActive(!pauseMenu.activeSelf);
+            if (pauseMenu.activeSelf)
+            {
+                Time.timeScale = 0f; // Pause game time
+            }
+            else
+            {
+                Time.timeScale = 1f; // Resume game time
+            }
         }
     }
+
 
     public void TogglePauseGame()
     {
@@ -175,4 +186,19 @@ public class GameManager : MonoBehaviour
         totalEnemies = Mathf.Max(0, totalEnemies - 1); // Avoid negative values
         Debug.Log("Enemy Unregistered. Remaining enemies: " + totalEnemies);
     }
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Initialize or enable pause menu here
+    }
+
 }

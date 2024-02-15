@@ -299,9 +299,10 @@ MonoBehaviour:
   chaseSpeed: 5
   circlingSpeed: 54.71
   circlingRadius: 3
-  detectionRadius: 20
+  detectionRadius: 13.1
   explosionEffectPrefab: {fileID: 6252455938135318148, guid: a4127b1dfbaaa2140abe4dd8f2435fac, type: 3}
-  lifetime: 15
+  lifetime: 30
+  damageRadius: 3
 --- !u!1 &1475106652833978083
 GameObject:
   m_ObjectHideFlags: 0

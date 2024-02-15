@@ -13,6 +13,9 @@ public class UFOController : MonoBehaviour
     private bool isCircling = false;
     private Vector3 circlingDirection;
     private float currentLifetime;
+    public float damageRadius = 3f;
+    // Example place where you might call TakeDamage
+    
 
     void Start()
     {
@@ -35,7 +38,7 @@ public class UFOController : MonoBehaviour
         currentLifetime -= Time.deltaTime;
         if (currentLifetime <= 0)
         {
-            DestroyUFO();
+            Explode();
             return;
         }
 
@@ -57,17 +60,16 @@ public class UFOController : MonoBehaviour
             Vector3 targetPosition = target.position + circlingDirection * circlingRadius;
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, chaseSpeed * Time.deltaTime);
         }
-    }
 
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Bullet"))
+        // New check for distance to the player to reduce health if too close
+        if (distanceToTarget <= 3f)
         {
-            DestroyUFO();
+            target.GetComponent<CarLives>()?.TakeDamage(1); // Safely try to call TakeDamage on the player
+            Explode(); // Directly call the explode function instead of DestroyUFO to ensure the explosion effect happens
         }
     }
 
-    void DestroyUFO()
+    void Explode()
     {
         if (explosionEffectPrefab != null)
         {
@@ -75,4 +77,50 @@ public class UFOController : MonoBehaviour
         }
         Destroy(gameObject);
     }
+
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Bullet"))
+        {
+            DestroyUFO();
+            GameManager.Instance.IncreaseScore(2); // Assuming each UFO destroyed adds 10 to the score
+
+        }
+    }
+
+    void DestroyUFO()
+    {
+        // Existing explosion effect instantiation...
+
+        // New: Check for player within damage radius and apply damage
+        if (Vector3.Distance(target.position, transform.position) <= damageRadius)
+        {
+            // Apply damage to the player
+            CarLives playerLives = target.GetComponent<CarLives>();
+            if (playerLives != null)
+            {
+                playerLives.TakeDamage(1); // Assuming 1 is the damage value
+            }
+        }
+
+        Destroy(gameObject);
+    }
+
+    void CheckForPlayerAndDamage()
+    {
+        if (Vector3.Distance(target.position, transform.position) <= damageRadius)
+        {
+            // Assuming GameManager has a method to communicate with the CarLives script,
+            // or directly accessing the CarLives script on the player object to apply damage.
+            // Here's a simplified example assuming you have a direct way to access the CarLives script:
+
+            CarLives playerLives = target.GetComponent<CarLives>();
+            if (playerLives != null)
+            {
+                playerLives.TakeDamage(1); // Passing 1 as the damage value
+            }
+        }
+    }
+
 }
